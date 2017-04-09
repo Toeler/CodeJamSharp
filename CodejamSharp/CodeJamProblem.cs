@@ -6,16 +6,18 @@ using System.Linq;
 
 namespace CodeJamSharp {
 	public class TestCase {
-		public readonly string Input;
+		public readonly string LinesPerCaseInput;
+		public readonly string[] Input;
 		public string Output;
 		public readonly int CaseNumber;
 
-		public TestCase(int caseNumber, string line) {
-			if (line == null) {
+		public TestCase(int caseNumber, string[] lines, string linesPerCaseInput = null) {
+			if (lines == null) {
 				throw new Exception("Input cannot be null");
 			}
-			Input = line;
+			Input = lines;
 			CaseNumber = caseNumber;
+			LinesPerCaseInput = linesPerCaseInput;
 		}
 	}
 
@@ -26,6 +28,8 @@ namespace CodeJamSharp {
 		public string InputFile { get; set; }
 		public string OutputFile { get; set; }
 		public string OutputFormat { get; set; } = "Case #{0}: {1}";
+		public int LinesPerCase { get; set; } = 1;
+		public Func<string, int> LinesPerCaseFunc { get; set; } 
 	}
 
 	public sealed class CodeJamProblem {
@@ -58,24 +62,54 @@ namespace CodeJamSharp {
 						var testCaseCount = Convert.ToInt32(file.ReadLine());
 
 						foreach (var caseNumber in Enumerable.Range(1, testCaseCount)) {
-							yield return new TestCase(caseNumber, file.ReadLine());
+							var linesPerCase = _config.LinesPerCase;
+							string linesPerCaseInput = null;
+							if (_config.LinesPerCaseFunc != null) {
+								linesPerCaseInput = file.ReadLine();
+								linesPerCase = _config.LinesPerCaseFunc(linesPerCaseInput);
+							} else if (linesPerCase == 0) {
+								linesPerCaseInput = file.ReadLine();
+								linesPerCase = Convert.ToInt32(linesPerCaseInput);
+							}
+							string[] lines = new string[linesPerCase];
+							foreach (var line in Enumerable.Range(0, linesPerCase)) {
+								lines[line] = file.ReadLine();
+							}
+							yield return new TestCase(caseNumber, lines, linesPerCaseInput);
 						}
 					}
 				}
 			}
 
 			if (filePath == null) {
+				// UNTESTED
 				string input;
+
 				var testCaseCount = -1;
-				var currentCount = 0;
-				while ((input = Console.ReadLine()) != null && currentCount != (testCaseCount - 1)) {
-					if (testCaseCount == -1) {
-						testCaseCount = Convert.ToInt32(input);
-					} else {
-						yield return new TestCase(++currentCount, input);
+				while ((input = Console.ReadLine()) != null && testCaseCount == -1) {
+					testCaseCount = Convert.ToInt32(input);
+				}
+
+				var linesPerCase = _config.LinesPerCase;
+				var currentLineCount = 0;
+				var currentCaseCount = 0;
+				string[] lines = new string[linesPerCase];
+				while((input = Console.ReadLine()) != null && currentCaseCount != testCaseCount) {
+					if (linesPerCase == 0) {
+						linesPerCase = Convert.ToInt32(input);
+						currentLineCount = 0;
+						lines = new string[linesPerCase];
+						continue;
+					}
+
+					lines[currentLineCount++] = input;
+
+					if (currentLineCount == linesPerCase) {
+						linesPerCase = _config.LinesPerCase;
+						yield return new TestCase(++currentCaseCount, lines);
 					}
 				}
-				yield return new TestCase(++currentCount, input);
+				yield return new TestCase(++currentCaseCount, lines);
 			}
 		}
 
