@@ -14,7 +14,7 @@ namespace CodeJamSharp {
 				//InputFile = "D-small-attempt0.in",
 				//InputFile = "D-large.in",
 				Solver = (testCase, cache) => {
-					var input = testCase.Input.Split(' ');
+					var input = testCase.Input[0].Split(' ');
 					var k = int.Parse(input[0]);
 					var c = int.Parse(input[1]);
 					var s = int.Parse(input[2]);

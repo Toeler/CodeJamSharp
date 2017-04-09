@@ -99,8 +99,8 @@ namespace CodeJamSharp {
 				//InputFile = "C-large.in",
 				OutputFormat = "Case #{0}:\r\n{1}",
 				Solver = (testCase, cache) => {
-					var n = int.Parse(testCase.Input.Split(' ')[0]);
-					var j = int.Parse(testCase.Input.Split(' ')[1]);
+					var n = int.Parse(testCase.Input[0].Split(' ')[0]);
+					var j = int.Parse(testCase.Input[0].Split(' ')[1]);
 
 					var startString = '1' + new string('0', n - 2) + '1';
 					var startNumber = Convert.ToInt64(startString, 2);

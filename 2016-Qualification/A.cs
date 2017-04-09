@@ -14,7 +14,7 @@ namespace CodeJamSharp {
 			//InputFile = "A-small-attempt0.in",
 			//InputFile = "A-large.in",
 			Solver = (testCase, cache) => {
-					var n = long.Parse(testCase.Input.Split(' ')[0]);
+					var n = long.Parse(testCase.Input[0].Split(' ')[0]);
 
 					if(n != 0) {
 						char[] digitsNotSeen = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };

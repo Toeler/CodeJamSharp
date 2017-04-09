@@ -16,7 +16,7 @@ namespace CodeJamSharp {
 				//InputFile = "B-large.in",
 				Solver = (testCase, cache) => {
 					Regex r = new Regex("(.)(?<=\\1\\1)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-					string filtered = r.Replace(testCase.Input, string.Empty);
+					string filtered = r.Replace(testCase.Input[0], string.Empty);
 
 					if(filtered.Last() == '+') {
 						return (filtered.Length - 1).ToString();
